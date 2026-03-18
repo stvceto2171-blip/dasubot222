@@ -1,11 +1,15 @@
 package tutorial;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.CopyMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class Bot extends TelegramLongPollingBot {
+    private boolean screaming = false;
+
     private final String botUsername;
     private final String botToken;
 
@@ -26,9 +30,34 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update);
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            sendText(update.getMessage().getChatId(), "buenos dias senor");
+        if (!update.hasMessage()) {
+            return;
+        }
+
+        Message msg = update.getMessage();
+        Long id = msg.getChatId();
+
+        if (msg.isCommand()) {
+            if (msg.getText().equals("/scream")) {
+                screaming = true;
+            } else if (msg.getText().equals("/whisper")) {
+                screaming = false;
+            }
+            return;
+        }
+
+        if (screaming) {
+            scream(id, msg);
+        } else {
+            copyMessage(id, msg.getMessageId());
+        }
+    }
+
+    private void scream(Long id, Message msg) {
+        if (msg.hasText()) {
+            sendText(id, msg.getText().toUpperCase());
+        } else {
+            copyMessage(id, msg.getMessageId());
         }
     }
 
@@ -39,6 +68,19 @@ public class Bot extends TelegramLongPollingBot {
                 .build();
         try {
             execute(sm);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void copyMessage(Long who, Integer messageId) {
+        CopyMessage copyMessage = CopyMessage.builder()
+                .chatId(who.toString())
+                .fromChatId(who.toString())
+                .messageId(messageId)
+                .build();
+        try {
+            execute(copyMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

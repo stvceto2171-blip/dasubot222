@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 .kotlin
 bot-run.log
+TBot/bot.log
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

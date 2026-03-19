@@ -7,8 +7,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class Main {
     public static void main(String[] args) throws TelegramApiException {
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        Bot bot = new Bot();
-        botsApi.registerBot(bot);
-        bot.sendText(8630367188L, "Hello World!");
+        botsApi.registerBot(new Bot());
     }
 }

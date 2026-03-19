@@ -23,6 +23,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class Bot extends TelegramLongPollingBot {
     private static final int TELEGRAM_TEXT_LIMIT = 4096;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String WEEKDAYS_RESPONSE =
+            "Russian: понедельник, вторник, среда, четверг, пятница, суббота, воскресенье.\n"
+                    + "French: lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche.";
 
     private final ExecutorService responseExecutor = Executors.newCachedThreadPool();
     private final OpenClawConfig openClawConfig = OpenClawConfig.load();
@@ -87,11 +90,13 @@ public class Bot extends TelegramLongPollingBot {
         switch (command) {
             case "/start" -> sendText(chatId,
                     "Connected to OpenClaw.\nModel: " + openClawConfig.defaultModel()
+                            + "\nCommands: /help, /model, /weekdays"
                             + "\nSend any text message to chat through your OpenClaw session.");
             case "/help" -> sendText(chatId,
-                    "Commands:\n/start\n/help\n/model\n\nSend any text message to chat with "
+                    "Commands:\n/start\n/help\n/model\n/weekdays\n\nSend any text message to chat with "
                             + openClawConfig.defaultModel() + ".");
             case "/model" -> sendText(chatId, "OpenClaw default model: " + openClawConfig.defaultModel());
+            case "/weekdays" -> sendText(chatId, WEEKDAYS_RESPONSE);
             default -> sendText(chatId, "Unknown command. Use /help.");
         }
     }

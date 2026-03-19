@@ -4,6 +4,12 @@ target/
 !**/src/test/**/target/
 .kotlin
 bot-run.log
+bot-run.err.log
+.bot-auto.pid
+.bot-runtime.pid
+.bot.env
+bot-auto.log
+bot-auto.err.log
 TBot/bot.log
 
 ### IntelliJ IDEA ###
